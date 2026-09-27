@@ -1,0 +1,2386 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXNOTE - Ultra Advanced Personal Notes & Logo Maker</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Montserrat:wght@400;700&family=Poppins:wght@400;700&family=Playfair+Display:wght@700&family=Cinzel:wght@700&family=Pacifico&family=Monoton&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-main: #0B0F19;
+            --bg-sidebar: #111827;
+            --bg-card: #1F2937;
+            --bg-input: #374151;
+            --text-main: #F9FAFB;
+            --text-muted: #9CA3AF;
+            --accent-primary: #6366F1;
+            --accent-secondary: #3B82F6;
+            --accent-glow: rgba(99, 102, 241, 0.25);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --danger: #EF4444;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.25s ease;
+            --calendar-font: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body.light-mode {
+            --bg-main: #F3F4F6;
+            --bg-sidebar: #FFFFFF;
+            --bg-card: #FFFFFF;
+            --bg-input: #E5E7EB;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 15px;
+            transition: var(--transition);
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 25px;
+            padding: 0 10px;
+        }
+
+        .btn-create {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: #fff;
+            border: none;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px var(--accent-glow);
+            transition: var(--transition);
+            margin-bottom: 20px;
+        }
+
+        .btn-create:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--accent-glow);
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(99, 102, 241, 0.12);
+            color: var(--accent-primary);
+        }
+
+        .nav-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin: 18px 10px 6px 10px;
+            font-weight: 600;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .header {
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-sidebar);
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .search-bar {
+            background: var(--bg-input);
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            width: 320px;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-main);
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            background: var(--bg-input);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        /* --- ACCENT COLOR SELECTOR --- */
+        .theme-colors {
+            display: flex;
+            gap: 6px;
+            background: var(--bg-input);
+            padding: 4px;
+            border-radius: 20px;
+        }
+
+        .color-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .color-dot:hover {
+            transform: scale(1.2);
+        }
+
+        /* --- VIEWS --- */
+        .view {
+            padding: 30px;
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        .view-header {
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .view-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* --- STATS & GRAPH --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-sm);
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .stat-info h4 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .stat-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .analytics-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            margin-bottom: 30px;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            height: 120px;
+            margin-top: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .bar-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            height: 100%;
+            justify-content: flex-end;
+        }
+
+        .bar-fill {
+            width: 100%;
+            max-width: 40px;
+            background: var(--accent-primary);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.5s ease;
+            min-height: 4px;
+        }
+
+        /* --- NOTES GRID --- */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .note-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            min-height: 200px;
+        }
+
+        .note-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-primary);
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .note-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            max-width: 80%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .note-pin {
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .note-pin.pinned {
+            color: var(--warning);
+        }
+
+        .note-body {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            line-height: 1.5;
+            overflow: hidden;
+            display: -webkit-box;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            flex-grow: 1;
+        }
+
+        .note-footer {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .note-tag {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--accent-primary);
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        /* --- LOGO MAKER STUDIO --- */
+        .logo-studio-wrapper {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 25px;
+        }
+
+        @media(max-width: 900px) {
+            .logo-studio-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .logo-controls {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .logo-preview-area {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            min-height: 450px;
+        }
+
+        #logoCanvas {
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-md);
+            background: #ffffff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 100%;
+        }
+
+        /* --- GALLERY VIEW --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            height: 160px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.08);
+        }
+
+        /* --- EDITOR OVERLAY --- */
+        .editor-container {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 720px;
+            height: 100%;
+            background: var(--bg-sidebar);
+            border-left: 1px solid var(--border-color);
+            z-index: 200;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+        }
+
+        .editor-container.open {
+            right: 0;
+        }
+
+        .editor-container.focus-mode {
+            max-width: 100% !important;
+            z-index: 300;
+        }
+
+        .editor-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .btn-icon:hover {
+            color: var(--text-main);
+        }
+
+        .btn-icon.active {
+            color: var(--danger);
+        }
+
+        .editor-toolbar {
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: var(--bg-main);
+            flex-wrap: wrap;
+        }
+
+        .toolbar-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+        }
+
+        .toolbar-btn:hover {
+            background: var(--bg-input);
+            color: var(--text-main);
+        }
+
+        .editor-body {
+            padding: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .editor-title {
+            background: none;
+            border: none;
+            outline: none;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            width: 100%;
+        }
+
+        .rich-content {
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text-main);
+            font-size: 1rem;
+            line-height: 1.6;
+            min-height: 180px;
+            width: 100%;
+            overflow-y: auto;
+        }
+
+        /* CHECKLIST & AUDIO */
+        .checklist-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-card);
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+        }
+
+        .todo-item input[type="checkbox"] {
+            accent-color: var(--accent-primary);
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .todo-item input[type="text"] {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-main);
+            flex-grow: 1;
+        }
+
+        .audio-recorder-box {
+            background: var(--bg-card);
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* IMAGE PREVIEW IN EDITOR */
+        .image-container-wrapper {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .img-preview-box {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+
+        .img-preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .img-preview-box .btn-del-img {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(239, 68, 68, 0.85);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            z-index: 2;
+        }
+
+        .editor-meta {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .select-input, .text-input, .date-input {
+            background: var(--bg-input);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            outline: none;
+            font-size: 0.85rem;
+        }
+
+        /* --- LIGHTBOX MODAL --- */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .lightbox-modal.open {
+            display: flex;
+        }
+
+        .lightbox-modal img {
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: var(--radius-md);
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            object-fit: contain;
+            transition: var(--transition);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        /* --- CALENDAR VIEW --- */
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            font-family: var(--calendar-font);
+        }
+
+        .calendar-day-head {
+            font-weight: 700;
+            text-align: center;
+            color: var(--accent-primary);
+            padding-bottom: 10px;
+            font-family: inherit;
+        }
+
+        .calendar-day {
+            min-height: 95px;
+            background: var(--bg-main);
+            border-radius: var(--radius-sm);
+            padding: 8px;
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            font-family: inherit;
+        }
+
+        .calendar-day:hover {
+            border-color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .calendar-day.empty {
+            background: transparent;
+            border: none;
+            cursor: default;
+        }
+
+        .calendar-day .day-num {
+            font-weight: 600;
+            font-family: inherit;
+        }
+
+        .calendar-mark-badge {
+            background: var(--accent-primary);
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-top: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .calendar-event-dot {
+            background: var(--warning);
+            height: 6px;
+            border-radius: 3px;
+        }
+
+        /* CALENDAR MARK EDIT MODAL */
+        .cal-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.7);
+            z-index: 950;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cal-modal.open {
+            display: flex;
+        }
+
+        .cal-modal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            border-radius: var(--radius-md);
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* STOPWATCH WIDGET */
+        .stopwatch-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stopwatch-display {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--accent-primary);
+        }
+
+        .btn-action {
+            background: var(--accent-primary);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* --- TOAST NOTIFICATION --- */
+        #toastContainer {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: var(--bg-card);
+            border-left: 4px solid var(--accent-primary);
+            color: var(--text-main);
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            font-size: 0.9rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -260px;
+                height: 100%;
+            }
+            .sidebar.mobile-open {
+                left: 0;
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+            .search-bar {
+                width: 160px;
+            }
+            .editor-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <i class="fa-solid fa-bolt"></i>
+            <span>NEXNOTE</span>
+        </div>
+
+        <button class="btn-create" onclick="createNewNote()">
+            <i class="fa-solid fa-plus"></i> Catatan Baru
+        </button>
+
+        <ul class="nav-list">
+            <li class="nav-item active" onclick="switchView('dashboard')">
+                <i class="fa-solid fa-chart-pie"></i> Dashboard
+            </li>
+            <li class="nav-item" onclick="switchView('all-notes')">
+                <i class="fa-solid fa-book"></i> Semua Catatan
+            </li>
+            <li class="nav-item" onclick="switchView('logo-maker')">
+                <i class="fa-solid fa-palette"></i> Pembuat Logo 🎨
+            </li>
+            <li class="nav-item" onclick="switchView('favorites')">
+                <i class="fa-solid fa-star"></i> Favorit
+            </li>
+            <li class="nav-item" onclick="switchView('gallery')">
+                <i class="fa-solid fa-image"></i> Galeri Foto
+            </li>
+            <li class="nav-item" onclick="switchView('calendar')">
+                <i class="fa-solid fa-calendar-days"></i> Kalender
+            </li>
+            <li class="nav-item" onclick="switchView('timer')">
+                <i class="fa-solid fa-stopwatch"></i> Fokus Timer
+            </li>
+
+            <div class="nav-section-title">Folder Catatan</div>
+            <li class="nav-item" onclick="filterFolder('Sekolah')">
+                <i class="fa-solid fa-folder" style="color: #6366F1;"></i> Sekolah
+            </li>
+            <li class="nav-item" onclick="filterFolder('Pribadi')">
+                <i class="fa-solid fa-folder" style="color: #3B82F6;"></i> Pribadi
+            </li>
+            <li class="nav-item" onclick="filterFolder('Ide')">
+                <i class="fa-solid fa-folder" style="color: #10B981;"></i> Ide
+            </li>
+
+            <div class="nav-section-title">Sistem & Cadangan</div>
+            <li class="nav-item" onclick="exportData()">
+                <i class="fa-solid fa-download"></i> Ekspor Data
+            </li>
+            <li class="nav-item" onclick="triggerImport()">
+                <i class="fa-solid fa-upload"></i> Impor Data
+            </li>
+            <input type="file" id="importFileInput" accept=".json" style="display:none;" onchange="importData(event)">
+            
+            <li class="nav-item" onclick="switchView('trash')">
+                <i class="fa-solid fa-trash"></i> Sampah
+            </li>
+        </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <header class="header">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fa-solid fa-bars mobile-menu-btn" onclick="toggleSidebar()"></i>
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+                    <input type="text" id="searchInput" placeholder="Cari catatan / tag..." oninput="searchNotes()">
+                </div>
+            </div>
+            <div class="header-actions">
+                <!-- Theme Accent Selector -->
+                <div class="theme-colors">
+                    <div class="color-dot" style="background:#6366F1;" onclick="setAccent('#6366F1', '#3B82F6')"></div>
+                    <div class="color-dot" style="background:#10B981;" onclick="setAccent('#10B981', '#059669')"></div>
+                    <div class="color-dot" style="background:#EF4444;" onclick="setAccent('#EF4444', '#DC2626')"></div>
+                    <div class="color-dot" style="background:#F59E0B;" onclick="setAccent('#F59E0B', '#D97706')"></div>
+                    <div class="color-dot" style="background:#8B5CF6;" onclick="setAccent('#8B5CF6', '#7C3AED')"></div>
+                </div>
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fa-solid fa-moon" id="themeIcon"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- DASHBOARD -->
+        <div class="view active" id="view-dashboard">
+            <div class="view-header">
+                <h2 class="view-title">Dashboard Utama</h2>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-notes-medical"></i></div>
+                    <div class="stat-info">
+                        <h4 id="stat-total">0</h4>
+                        <p>Total Catatan</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
+                    <div class="stat-info">
+                        <h4 id="stat-favs">0</h4>
+                        <p>Favorit</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-image"></i></div>
+                    <div class="stat-info">
+                        <h4 id="stat-imgs">0</h4>
+                        <p>Foto Tersimpan</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-lock"></i></div>
+                    <div class="stat-info">
+                        <h4 id="stat-locked">0</h4>
+                        <p>Terkunci PIN</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANALYTICS CHART -->
+            <div class="analytics-box">
+                <h3>📊 Distribusi Catatan per Folder</h3>
+                <div class="bar-chart">
+                    <div class="bar-col">
+                        <div class="bar-fill" id="bar-sekolah" style="height: 0%;"></div>
+                        <span style="font-size:0.75rem;">Sekolah</span>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-fill" id="bar-pribadi" style="height: 0%;"></div>
+                        <span style="font-size:0.75rem;">Pribadi</span>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-fill" id="bar-ide" style="height: 0%;"></div>
+                        <span style="font-size:0.75rem;">Ide</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 15px;">Catatan Terbaru</h3>
+            <div class="notes-grid" id="dashboard-notes"></div>
+        </div>
+
+        <!-- ALL NOTES VIEW -->
+        <div class="view" id="view-all-notes">
+            <div class="view-header">
+                <h2 class="view-title">Semua Catatan</h2>
+                <select class="select-input" onchange="sortNotes(this.value)">
+                    <option value="newest">Urutan: Terbaru</option>
+                    <option value="oldest">Urutan: Terlama</option>
+                    <option value="az">Judul A-Z</option>
+                    <option value="za">Judul Z-A</option>
+                </select>
+            </div>
+            <div class="notes-grid" id="all-notes-grid"></div>
+        </div>
+
+        <!-- LOGO MAKER STUDIO VIEW -->
+        <div class="view" id="view-logo-maker">
+            <div class="view-header">
+                <h2 class="view-title">Studio Pembuat Logo 🎨</h2>
+                <button class="btn-action" onclick="downloadLogo()"><i class="fa-solid fa-download"></i> Unduh Logo (PNG)</button>
+            </div>
+
+            <div class="logo-studio-wrapper">
+                <!-- Logo Controls -->
+                <div class="logo-controls">
+                    <div class="form-group">
+                        <label>Pilih Font Teks Logo:</label>
+                        <select class="select-input" id="logoFontSelect" onchange="drawLogo()">
+                            <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans (Modern Clean)</option>
+                            <option value="'Montserrat', sans-serif">Montserrat (Bold & Clean)</option>
+                            <option value="'Poppins', sans-serif">Poppins (Rounded)</option>
+                            <option value="'Playfair Display', serif">Playfair Display (Elegant Classy)</option>
+                            <option value="'Cinzel', serif">Cinzel (Luxury Serif)</option>
+                            <option value="'Pacifico', cursive">Pacifico (Handwritten Script)</option>
+                            <option value="'Monoton', cursive">Monoton (Retro Neon)</option>
+                            <option value="'Brush Script MT', cursive">Brush Script (Vintage)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tata Letak / Layout:</label>
+                        <select class="select-input" id="logoLayout" onchange="drawLogo()">
+                            <option value="top">Ikon di Atas Teks</option>
+                            <option value="left">Ikon di Kiri Teks</option>
+                            <option value="text-only">Hanya Teks Logo</option>
+                        </select>
+                    </div>
+
+                    <hr style="border:0; border-top:1px solid var(--border-color);">
+
+                    <div class="form-group">
+                        <label>Upload Mentahan / Gambar (Galeri):</label>
+                        <input type="file" id="logoImageInput" accept="image/*" class="text-input" onchange="handleLogoImageUpload(event)">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Atau Pilih Template Mentahan:</label>
+                        <select class="select-input" id="logoIconSelect" onchange="drawLogo()">
+                            <option value="none">-- Tanpa Ikon Default --</option>
+                            <option value="bolt">⚡ Petir / Energi</option>
+                            <option value="star">⭐ Bintang / Premium</option>
+                            <option value="crown">👑 Mahkota / Mewah</option>
+                            <option value="shield">🛡️ Perisai / Keamanan</option>
+                            <option value="fire">🔥 Api / Semangat</option>
+                            <option value="gem">💎 Permata / Diamond</option>
+                            <option value="rocket">🚀 Roket / Startup</option>
+                        </select>
+                    </div>
+
+                    <hr style="border:0; border-top:1px solid var(--border-color);">
+
+                    <div class="form-group">
+                        <label>Teks Utama Logo:</label>
+                        <input type="text" id="logoText" value="NEXNOTE" class="text-input" oninput="drawLogo()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Slogan / Teks Tambahan:</label>
+                        <input type="text" id="logoSubtext" value="CREATIVE STUDIO" class="text-input" oninput="drawLogo()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ukuran Teks Utama:</label>
+                        <input type="range" id="logoTextSize" min="16" max="60" value="32" oninput="drawLogo()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Warna Teks:</label>
+                        <input type="color" id="logoTextColor" value="#6366F1" onchange="drawLogo()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Garis Tepi Teks (Text Stroke Size):</label>
+                        <input type="range" id="logoTextStroke" min="0" max="10" value="0" oninput="drawLogo()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Warna Garis Tepi Teks:</label>
+                        <input type="color" id="logoStrokeColor" value="#ffffff" onchange="drawLogo()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Efek Bayangan Teks (Text Shadow):</label>
+                        <input type="range" id="logoTextShadow" min="0" max="25" value="0" oninput="drawLogo()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Warna Bayangan Teks:</label>
+                        <input type="color" id="logoShadowColor" value="#000000" onchange="drawLogo()">
+                    </div>
+
+                    <hr style="border:0; border-top:1px solid var(--border-color);">
+
+                    <div class="form-group">
+                        <label>Bentuk Latar Belakang:</label>
+                        <select class="select-input" id="logoShape" onchange="drawLogo()">
+                            <option value="circle">Lingkaran (Circle)</option>
+                            <option value="square">Persegi Lengkung (Rounded Square)</option>
+                            <option value="shield">Perisai (Shield)</option>
+                            <option value="star">Bintang (Star Badge)</option>
+                            <option value="none">Transparan / Tanpa Frame</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Warna Latar Belakang Logo:</label>
+                        <input type="color" id="logoBgColor" value="#111827" onchange="drawLogo()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Warna Garis Tepi (Border):</label>
+                        <input type="color" id="logoBorderColor" value="#3B82F6" onchange="drawLogo()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Efek Latar Belakang:</label>
+                        <select class="select-input" id="logoBgEffect" onchange="drawLogo()">
+                            <option value="none">Polos</option>
+                            <option value="sparkle">Hiasan Bintang (Sparkles)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Logo Canvas Preview -->
+                <div class="logo-preview-area">
+                    <canvas id="logoCanvas" width="400" height="400"></canvas>
+                    <p style="color:var(--text-muted); font-size:0.85rem;">Pratinjau Logo Resolusi Tinggi (400x400 px)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAVORITES VIEW -->
+        <div class="view" id="view-favorites">
+            <div class="view-header">
+                <h2 class="view-title">Catatan Favorit ⭐</h2>
+            </div>
+            <div class="notes-grid" id="favorites-grid"></div>
+        </div>
+
+        <!-- GALLERY VIEW -->
+        <div class="view" id="view-gallery">
+            <div class="view-header">
+                <h2 class="view-title">Galeri Foto Tersimpan 📷</h2>
+                <p style="color:var(--text-muted); font-size:0.9rem;">Klik pada foto untuk melihat ukuran penuh</p>
+            </div>
+            <div class="gallery-grid" id="gallery-grid"></div>
+        </div>
+
+        <!-- CALENDAR VIEW -->
+        <div class="view" id="view-calendar">
+            <div class="view-header">
+                <h2 class="view-title">Kalender Catatan 📅</h2>
+                <div class="calendar-nav">
+                    <select class="select-input" id="calFontSelect" onchange="changeCalendarFont(this.value)">
+                        <option value="'Plus Jakarta Sans', sans-serif">Font: Jakarta Sans</option>
+                        <option value="'Montserrat', sans-serif">Font: Montserrat</option>
+                        <option value="'Poppins', sans-serif">Font: Poppins</option>
+                        <option value="'Playfair Display', serif">Font: Playfair Serif</option>
+                        <option value="'Cinzel', serif">Font: Cinzel</option>
+                        <option value="'Pacifico', cursive">Font: Pacifico</option>
+                    </select>
+
+                    <button class="btn-action" onclick="changeMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                    <h3 id="calendarMonthYear" style="min-width:180px; text-align:center;"></h3>
+                    <button class="btn-action" onclick="changeMonth(1)"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">Klik tanggal untuk menambah/mengedit penanda agenda secara langsung.</p>
+            <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+
+        <!-- FOCUS TIMER VIEW -->
+        <div class="view" id="view-timer">
+            <div class="view-header">
+                <h2 class="view-title">Stopwatch & Timer Fokus ⏱️</h2>
+            </div>
+            <div class="stopwatch-card">
+                <div class="stopwatch-display" id="timerDisplay">00:00:00</div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-action" onclick="startTimer()">Mulai</button>
+                    <button class="btn-action" style="background:var(--warning)" onclick="pauseTimer()">Jeda</button>
+                    <button class="btn-danger" onclick="resetTimer()">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRASH VIEW -->
+        <div class="view" id="view-trash">
+            <div class="view-header">
+                <h2 class="view-title">Sampah 🗑️</h2>
+                <button class="btn-danger" onclick="emptyAllTrash()"><i class="fa-solid fa-fire"></i> Kosongkan Semua Sampah</button>
+            </div>
+            <div class="notes-grid" id="trash-grid"></div>
+        </div>
+    </main>
+
+    <!-- CALENDAR MARK EDITOR MODAL -->
+    <div class="cal-modal" id="calModal">
+        <div class="cal-modal-card">
+            <h3 id="calModalTitle">Penanda Kalender</h3>
+            <div class="form-group">
+                <label>Judul Penanda / Agenda:</label>
+                <input type="text" id="calMarkInput" class="text-input" placeholder="Misal: Ujian / Rapat...">
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button class="btn-danger" onclick="deleteCalendarMark()">Hapus</button>
+                <button class="btn-action" onclick="saveCalendarMark()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDITOR OVERLAY -->
+    <div class="editor-container" id="editor">
+        <div class="editor-header">
+            <button class="btn-icon" onclick="closeEditor()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+            <div class="editor-actions">
+                <button class="btn-icon" title="Mode Baca Bersih (Zen Mode)" onclick="toggleZenMode()"><i class="fa-solid fa-expand"></i></button>
+                <span style="font-size:0.8rem; color:var(--success)"><i class="fa-solid fa-check"></i> Tersimpan</span>
+                <button class="btn-icon" title="Kunci PIN Catatan" onclick="togglePinLock()"><i class="fa-solid fa-lock" id="lockIcon"></i></button>
+                <button class="btn-icon" title="Sematkan Catatan" onclick="togglePinCurrentNote()"><i class="fa-solid fa-thumbtack" id="pinIcon"></i></button>
+                <button class="btn-icon" title="Favorit" onclick="toggleFavCurrentNote()"><i class="fa-solid fa-star" id="favIcon"></i></button>
+                <button class="btn-icon" onclick="deleteCurrentNote()" style="color: var(--danger);"><i class="fa-solid fa-trash"></i></button>
+            </div>
+        </div>
+
+        <!-- EDITOR TOOLBAR -->
+        <div class="editor-toolbar">
+            <!-- FITUR BARU: MENU PILIHAN FONT CATATAN -->
+            <select class="select-input" id="noteFontSelect" onchange="changeNoteFont(this.value)" style="padding: 4px 8px; font-size:0.82rem;">
+                <option value="Plus Jakarta Sans">Font: Jakarta Sans</option>
+                <option value="Montserrat">Font: Montserrat</option>
+                <option value="Poppins">Font: Poppins</option>
+                <option value="Playfair Display">Font: Playfair Serif</option>
+                <option value="Cinzel">Font: Cinzel</option>
+                <option value="Pacifico">Font: Pacifico</option>
+                <option value="Monoton">Font: Monoton</option>
+                <option value="Courier New">Font: Courier Code</option>
+                <option value="Comic Sans MS">Font: Comic Sans</option>
+            </select>
+
+            <span style="color:var(--border-color)">|</span>
+
+            <button class="toolbar-btn" onclick="formatText('bold')"><i class="fa-solid fa-bold"></i></button>
+            <button class="toolbar-btn" onclick="formatText('italic')"><i class="fa-solid fa-italic"></i></button>
+            <button class="toolbar-btn" onclick="formatText('underline')"><i class="fa-solid fa-underline"></i></button>
+            <button class="toolbar-btn" onclick="formatText('strikeThrough')"><i class="fa-solid fa-strikethrough"></i></button>
+
+            <span style="color:var(--border-color)">|</span>
+
+            <button class="toolbar-btn" id="voiceBtn" onclick="toggleVoiceSpeech()">
+                <i class="fa-solid fa-microphone"></i> Dikte Suara
+            </button>
+
+            <button class="toolbar-btn" onclick="triggerFileUpload()">
+                <i class="fa-solid fa-camera"></i> Foto
+            </button>
+            <input type="file" id="imageFileInput" accept="image/*" style="display: none;" onchange="handleFileUpload(event)">
+            
+            <button class="toolbar-btn" onclick="addChecklistItem()">
+                <i class="fa-solid fa-list-check"></i> + Check
+            </button>
+
+            <button class="toolbar-btn" onclick="toggleAudioRecorder()">
+                <i class="fa-solid fa-microphone-lines"></i> Rekam Audio
+            </button>
+
+            <!-- Emojis -->
+            <button class="toolbar-btn" onclick="insertEmoji('📌')">📌</button>
+            <button class="toolbar-btn" onclick="insertEmoji('⭐')">⭐</button>
+            <button class="toolbar-btn" onclick="insertEmoji('💡')">💡</button>
+            <button class="toolbar-btn" onclick="insertEmoji('✅')">✅</button>
+        </div>
+
+        <div class="editor-body">
+            <input type="text" class="editor-title" id="noteTitle" placeholder="Judul catatan..." oninput="autoSave()">
+            
+            <!-- Rich Text Editable Container -->
+            <div class="rich-content" id="noteContent" contenteditable="true" oninput="autoSave()"></div>
+
+            <!-- Audio Recording Box -->
+            <div class="audio-recorder-box" id="audioBox" style="display:none;">
+                <button class="btn-action" id="recordAudioBtn" onclick="startAudioRecord()">Mulai Rekam Audio</button>
+                <audio id="audioPlayer" controls style="display:none; height:32px;"></audio>
+            </div>
+            
+            <!-- Checklist Container -->
+            <div class="checklist-container" id="checklistContainer"></div>
+
+            <label style="font-size:0.85rem; color:var(--text-muted); margin-top:10px; display:block;">Foto dalam catatan ini (Klik untuk perbesar):</label>
+            <div class="image-container-wrapper" id="imagePreviewContainer"></div>
+        </div>
+
+        <div class="editor-meta">
+            <div>
+                <label style="font-size: 0.8rem; color: var(--text-muted);">Folder:</label>
+                <select class="select-input" id="noteFolder" onchange="autoSave()">
+                    <option value="Sekolah">Sekolah</option>
+                    <option value="Pribadi">Pribadi</option>
+                    <option value="Ide">Ide</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-size: 0.8rem; color: var(--text-muted);">Tag:</label>
+                <input type="text" class="text-input" id="noteTag" placeholder="Contoh: #penting" oninput="autoSave()">
+            </div>
+            <div>
+                <label style="font-size: 0.8rem; color: var(--text-muted);">Pengingat (Alarm):</label>
+                <input type="datetime-local" class="date-input" id="noteReminder" onchange="autoSave()">
+            </div>
+            <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;" id="wordCounter">0 kata | 0 karakter</span>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX FULLSCREEN IMAGE VIEWER -->
+    <div class="lightbox-modal" id="lightboxModal">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <img id="lightboxImg" src="" alt="Foto Ukuran Penuh">
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer"></div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        let notes = JSON.parse(localStorage.getItem('NEXNOTE_DATA')) || [];
+        let calendarMarks = JSON.parse(localStorage.getItem('NEXNOTE_CAL_MARKS')) || {};
+        let activeNoteId = null;
+        let selectedCalDateStr = null;
+        let isRecordingSpeech = false;
+        let recognition = null;
+        let timerInterval = null;
+        let timerSeconds = 0;
+        let mediaRecorder = null;
+        let audioChunks = [];
+
+        // Variable Kalender Dinamis
+        let currentCalDate = new Date();
+
+        // Variable Logo Maker
+        let uploadedLogoImage = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNotes();
+            updateStats();
+            renderCalendar();
+            initSpeechRecognition();
+            drawLogo();
+            checkReminders();
+            setInterval(checkReminders, 30000);
+        });
+
+        function showToast(message) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function switchView(viewName) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            
+            const selectedView = document.getElementById(`view-${viewName}`);
+            if(selectedView) selectedView.classList.add('active');
+
+            if(viewName === 'gallery') renderGallery();
+            if(viewName === 'trash') renderTrash();
+            if(viewName === 'calendar') renderCalendar();
+            if(viewName === 'logo-maker') drawLogo();
+
+            document.getElementById('sidebar').classList.remove('mobile-open');
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('mobile-open');
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const icon = document.getElementById('themeIcon');
+            icon.className = document.body.classList.contains('light-mode') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+
+        function setAccent(pColor, sColor) {
+            document.documentElement.style.setProperty('--accent-primary', pColor);
+            document.documentElement.style.setProperty('--accent-secondary', sColor);
+        }
+
+        function createNewNote() {
+            const newNote = {
+                id: Date.now(),
+                title: '',
+                content: '',
+                fontFamily: 'Plus Jakarta Sans',
+                folder: 'Pribadi',
+                tag: '',
+                pinned: false,
+                favorite: false,
+                deleted: false,
+                pinLock: null,
+                images: [],
+                todos: [],
+                audio: null,
+                reminder: '',
+                date: new Date().toISOString().split('T')[0],
+                updatedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            notes.unshift(newNote);
+            saveToStorage();
+            openEditor(newNote.id);
+        }
+
+        function openEditor(id) {
+            const note = notes.find(n => n.id === id);
+            if(!note) return;
+
+            if(note.pinLock) {
+                const userPin = prompt("Catatan ini terkunci! Masukkan PIN:");
+                if(userPin !== note.pinLock) {
+                    alert("PIN Salah!");
+                    return;
+                }
+            }
+
+            activeNoteId = id;
+            document.getElementById('noteTitle').value = note.title;
+            
+            const noteContentEl = document.getElementById('noteContent');
+            noteContentEl.innerHTML = note.content;
+            noteContentEl.style.fontFamily = note.fontFamily || 'Plus Jakarta Sans';
+            
+            document.getElementById('noteFontSelect').value = note.fontFamily || 'Plus Jakarta Sans';
+            document.getElementById('noteFolder').value = note.folder;
+            document.getElementById('noteTag').value = note.tag || '';
+            document.getElementById('noteReminder').value = note.reminder || '';
+
+            updateEditorIcons(note);
+            renderEditorImages(note);
+            renderTodos(note);
+            setupAudioPlayer(note);
+            updateWordCount();
+
+            document.getElementById('editor').classList.add('open');
+        }
+
+        /* --- FITUR MERUBAH FONT CATATAN --- */
+        function changeNoteFont(fontName) {
+            const contentBox = document.getElementById('noteContent');
+            const selection = window.getSelection();
+
+            if (selection.rangeCount > 0 && !selection.isCollapsed) {
+                // Ubah font untuk teks yang diblok
+                document.execCommand('fontName', false, fontName);
+            } else {
+                // Ubah font keseluruhan catatan
+                contentBox.style.fontFamily = fontName;
+            }
+
+            const note = notes.find(n => n.id === activeNoteId);
+            if(note) {
+                note.fontFamily = fontName;
+                autoSave();
+            }
+        }
+
+        function closeEditor() {
+            document.getElementById('editor').classList.remove('open', 'focus-mode');
+            activeNoteId = null;
+            renderNotes();
+            updateStats();
+        }
+
+        function toggleZenMode() {
+            document.getElementById('editor').classList.toggle('focus-mode');
+        }
+
+        function autoSave() {
+            if(!activeNoteId) return;
+            const note = notes.find(n => n.id === activeNoteId);
+            if(note) {
+                note.title = document.getElementById('noteTitle').value;
+                note.content = document.getElementById('noteContent').innerHTML;
+                note.fontFamily = document.getElementById('noteFontSelect').value;
+                note.folder = document.getElementById('noteFolder').value;
+                note.tag = document.getElementById('noteTag').value;
+                note.reminder = document.getElementById('noteReminder').value;
+                note.updatedAt = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                saveToStorage();
+                updateWordCount();
+            }
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('NEXNOTE_DATA', JSON.stringify(notes));
+            localStorage.setItem('NEXNOTE_CAL_MARKS', JSON.stringify(calendarMarks));
+        }
+
+        /* --- LOGO MAKER STUDIO SYSTEM --- */
+        function handleLogoImageUpload(e) {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        uploadedLogoImage = img;
+                        drawLogo();
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function drawLogo() {
+            const canvas = document.getElementById('logoCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            const selectedFont = document.getElementById('logoFontSelect').value;
+            const layout = document.getElementById('logoLayout').value;
+            const shape = document.getElementById('logoShape').value;
+            const bgColor = document.getElementById('logoBgColor').value;
+            const borderColor = document.getElementById('logoBorderColor').value;
+            const textColor = document.getElementById('logoTextColor').value;
+            const strokeColor = document.getElementById('logoStrokeColor').value;
+            const shadowColor = document.getElementById('logoShadowColor').value;
+            const text = document.getElementById('logoText').value;
+            const subtext = document.getElementById('logoSubtext').value;
+            const textSize = parseInt(document.getElementById('logoTextSize').value);
+            const textStroke = parseInt(document.getElementById('logoTextStroke').value);
+            const textShadow = parseInt(document.getElementById('logoTextShadow').value);
+            const iconSelect = document.getElementById('logoIconSelect').value;
+            const bgEffect = document.getElementById('logoBgEffect').value;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.shadowBlur = 0;
+            ctx.shadowColor = 'transparent';
+
+            if(shape !== 'none') {
+                ctx.fillStyle = bgColor;
+                ctx.strokeStyle = borderColor;
+                ctx.lineWidth = 8;
+
+                if(shape === 'circle') {
+                    ctx.beginPath();
+                    ctx.arc(200, 200, 180, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+                } else if(shape === 'square') {
+                    ctx.beginPath();
+                    ctx.roundRect(20, 20, 360, 360, 40);
+                    ctx.fill();
+                    ctx.stroke();
+                } else if(shape === 'shield') {
+                    ctx.beginPath();
+                    ctx.moveTo(200, 30);
+                    ctx.lineTo(360, 80);
+                    ctx.lineTo(320, 300);
+                    ctx.lineTo(200, 370);
+                    ctx.lineTo(80, 300);
+                    ctx.lineTo(40, 80);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+                } else if(shape === 'star') {
+                    ctx.beginPath();
+                    ctx.arc(200, 200, 175, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+                }
+            }
+
+            if(bgEffect === 'sparkle') {
+                ctx.fillStyle = borderColor;
+                for(let i=0; i<15; i++) {
+                    let rx = Math.random() * 300 + 50;
+                    let ry = Math.random() * 300 + 50;
+                    ctx.beginPath();
+                    ctx.arc(rx, ry, Math.random() * 3 + 1, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            let iconY = 150;
+            let textY = 250;
+
+            if(layout === 'text-only') {
+                textY = 200;
+            } else if(layout === 'left') {
+                iconY = 200;
+                textY = 200;
+            }
+
+            if(layout !== 'text-only') {
+                let iconX = layout === 'left' ? 100 : 200;
+                if(uploadedLogoImage) {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(iconX, iconY, 50, 0, Math.PI * 2);
+                    ctx.clip();
+                    ctx.drawImage(uploadedLogoImage, iconX - 50, iconY - 50, 100, 100);
+                    ctx.restore();
+                } else if(iconSelect !== 'none') {
+                    ctx.fillStyle = textColor;
+                    ctx.font = '50px "Font Awesome 6 Free"';
+                    ctx.textAlign = 'center';
+                    let iconChar = '⚡';
+                    if(iconSelect === 'star') iconChar = '⭐';
+                    if(iconSelect === 'crown') iconChar = '👑';
+                    if(iconSelect === 'shield') iconChar = '🛡️';
+                    if(iconSelect === 'fire') iconChar = '🔥';
+                    if(iconSelect === 'gem') iconChar = '💎';
+                    if(iconSelect === 'rocket') iconChar = '🚀';
+                    ctx.fillText(iconChar, iconX, iconY + 15);
+                }
+            }
+
+            if(textShadow > 0) {
+                ctx.shadowColor = shadowColor;
+                ctx.shadowBlur = textShadow;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
+            }
+
+            ctx.fillStyle = textColor;
+            ctx.font = `bold ${textSize}px ${selectedFont}`;
+            ctx.textAlign = layout === 'left' ? 'left' : 'center';
+            let mainTextX = layout === 'left' ? 170 : 200;
+
+            if(textStroke > 0) {
+                ctx.strokeStyle = strokeColor;
+                ctx.lineWidth = textStroke;
+                ctx.strokeText(text, mainTextX, textY);
+            }
+            ctx.fillText(text, mainTextX, textY);
+
+            if(subtext) {
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = borderColor;
+                ctx.font = `600 13px ${selectedFont}`;
+                ctx.fillText(subtext.toUpperCase(), mainTextX, textY + 30);
+            }
+        }
+
+        function downloadLogo() {
+            const canvas = document.getElementById('logoCanvas');
+            const link = document.createElement('a');
+            link.download = `Logo-${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast("🎨 Logo berhasil diunduh dalam format PNG!");
+        }
+
+        /* --- KALENDER PENANDA & EDIT MENU --- */
+        function changeCalendarFont(fontFamily) {
+            document.documentElement.style.setProperty('--calendar-font', fontFamily);
+            renderCalendar();
+        }
+
+        function openCalMarkModal(dateStr) {
+            selectedCalDateStr = dateStr;
+            document.getElementById('calModalTitle').innerText = `Edit Penanda (${dateStr})`;
+            document.getElementById('calMarkInput').value = calendarMarks[dateStr] || '';
+            document.getElementById('calModal').classList.add('open');
+        }
+
+        function saveCalendarMark() {
+            if(!selectedCalDateStr) return;
+            const val = document.getElementById('calMarkInput').value.trim();
+            if(val) {
+                calendarMarks[selectedCalDateStr] = val;
+            } else {
+                delete calendarMarks[selectedCalDateStr];
+            }
+            saveToStorage();
+            document.getElementById('calModal').classList.remove('open');
+            renderCalendar();
+            showToast("📅 Penanda kalender tersimpan!");
+        }
+
+        function deleteCalendarMark() {
+            if(!selectedCalDateStr) return;
+            delete calendarMarks[selectedCalDateStr];
+            saveToStorage();
+            document.getElementById('calModal').classList.remove('open');
+            renderCalendar();
+            showToast("🗑️ Penanda kalender dihapus.");
+        }
+
+        function formatText(command) {
+            document.execCommand(command, false, null);
+            autoSave();
+        }
+
+        function initSpeechRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.lang = 'id-ID';
+
+                recognition.onresult = (event) => {
+                    let transcript = '';
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) {
+                            transcript += event.results[i][0].transcript;
+                        }
+                    }
+                    if(transcript) {
+                        document.getElementById('noteContent').innerHTML += ' ' + transcript;
+                        autoSave();
+                    }
+                };
+            }
+        }
+
+        function toggleVoiceSpeech() {
+            if(!recognition) {
+                alert("Browser Anda tidak mendukung fitur Dikte Suara.");
+                return;
+            }
+            const btn = document.getElementById('voiceBtn');
+            if(isRecordingSpeech) {
+                recognition.stop();
+                isRecordingSpeech = false;
+                btn.classList.remove('active');
+            } else {
+                recognition.start();
+                isRecordingSpeech = true;
+                btn.classList.add('active');
+            }
+        }
+
+        function toggleAudioRecorder() {
+            const box = document.getElementById('audioBox');
+            box.style.display = box.style.display === 'none' ? 'flex' : 'none';
+        }
+
+        function startAudioRecord() {
+            const btn = document.getElementById('recordAudioBtn');
+            if(mediaRecorder && mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+                btn.innerText = "Mulai Rekam Audio";
+            } else {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+                    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(audioChunks, { type: 'audio/mp3' });
+                        const reader = new FileReader();
+                        reader.readAsDataURL(blob);
+                        reader.onloadend = () => {
+                            const note = notes.find(n => n.id === activeNoteId);
+                            if(note) {
+                                note.audio = reader.result;
+                                saveToStorage();
+                                setupAudioPlayer(note);
+                            }
+                        };
+                    };
+                    mediaRecorder.start();
+                    btn.innerText = "Berhenti Rekam...";
+                });
+            }
+        }
+
+        function setupAudioPlayer(note) {
+            const player = document.getElementById('audioPlayer');
+            const box = document.getElementById('audioBox');
+            if(note.audio) {
+                box.style.display = 'flex';
+                player.style.display = 'block';
+                player.src = note.audio;
+            } else {
+                player.style.display = 'none';
+            }
+        }
+
+        function openLightbox(src) {
+            const img = document.getElementById('lightboxImg');
+            img.src = src;
+            document.getElementById('lightboxModal').classList.add('open');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightboxModal').classList.remove('open');
+        }
+
+        /* --- CHECKLIST / TO-DO --- */
+        function addChecklistItem() {
+            if(!activeNoteId) return;
+            const note = notes.find(n => n.id === activeNoteId);
+            if(!note.todos) note.todos = [];
+            note.todos.push({ text: '', done: false });
+            saveToStorage();
+            renderTodos(note);
+        }
+
+        function renderTodos(note) {
+            const container = document.getElementById('checklistContainer');
+            container.innerHTML = '';
+            if(note.todos) {
+                note.todos.forEach((todo, idx) => {
+                    container.innerHTML += `
+                        <div class="todo-item">
+                            <input type="checkbox" ${todo.done ? 'checked' : ''} onchange="toggleTodo(${idx})">
+                            <input type="text" value="${todo.text}" placeholder="Item tugas..." oninput="updateTodoText(${idx}, this.value)">
+                            <i class="fa-solid fa-xmark" style="cursor:pointer; color:var(--text-muted);" onclick="removeTodo(${idx})"></i>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function toggleTodo(idx) {
+            const note = notes.find(n => n.id === activeNoteId);
+            if(note && note.todos[idx]) {
+                note.todos[idx].done = !note.todos[idx].done;
+                saveToStorage();
+            }
+        }
+
+        function updateTodoText(idx, val) {
+            const note = notes.find(n => n.id === activeNoteId);
+            if(note && note.todos[idx]) {
+                note.todos[idx].text = val;
+                saveToStorage();
+            }
+        }
+
+        function removeTodo(idx) {
+            const note = notes.find(n => n.id === activeNoteId);
+            if(note && note.todos) {
+                note.todos.splice(idx, 1);
+                saveToStorage();
+                renderTodos(note);
+            }
+        }
+
+        /* --- UPLOAD FOTO --- */
+        function triggerFileUpload() {
+            document.getElementById('imageFileInput').click();
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file || !activeNoteId) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Image = e.target.result;
+                const note = notes.find(n => n.id === activeNoteId);
+                if (note) {
+                    if (!note.images) note.images = [];
+                    note.images.push(base64Image);
+                    saveToStorage();
+                    renderEditorImages(note);
+                }
+            };
+            reader.readAsDataURL(file);
+            event.target.value = '';
+        }
+
+        function removeImage(index, event) {
+            event.stopPropagation();
+            if (!activeNoteId) return;
+            const note = notes.find(n => n.id === activeNoteId);
+            if (note && note.images) {
+                note.images.splice(index, 1);
+                saveToStorage();
+                renderEditorImages(note);
+            }
+        }
+
+        function renderEditorImages(note) {
+            const container = document.getElementById('imagePreviewContainer');
+            container.innerHTML = '';
+            if (note.images && note.images.length > 0) {
+                note.images.forEach((img, index) => {
+                    container.innerHTML += `
+                        <div class="img-preview-box" onclick="openLightbox('${img}')">
+                            <img src="${img}" alt="Foto">
+                            <button class="btn-del-img" onclick="removeImage(${index}, event)"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    `;
+                });
+            } else {
+                container.innerHTML = `<span style="font-size:0.8rem; color:var(--text-muted);">Belum ada foto.</span>`;
+            }
+        }
+
+        /* --- LOCK PIN & EMOJI --- */
+        function togglePinLock() {
+            if(!activeNoteId) return;
+            const note = notes.find(n => n.id === activeNoteId);
+            if(note.pinLock) {
+                if(confirm("Hapus kunci PIN dari catatan ini?")) {
+                    note.pinLock = null;
+                }
+            } else {
+                const newPin = prompt("Buat PIN (angka) untuk mengunci catatan ini:");
+                if(newPin) note.pinLock = newPin;
+            }
+            saveToStorage();
+            updateEditorIcons(note);
+        }
+
+        function insertEmoji(emoji) {
+            document.getElementById('noteContent').innerHTML += emoji;
+            autoSave();
+        }
+
+        function updateWordCount() {
+            const text = document.getElementById('noteContent').innerText || '';
+            const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+            const chars = text.length;
+            document.getElementById('wordCounter').innerText = `${words} kata | ${chars} karakter`;
+        }
+
+        /* --- KALENDER DINAMIS OTOMATIS --- */
+        function changeMonth(delta) {
+            currentCalDate.setMonth(currentCalDate.getMonth() + delta);
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const cal = document.getElementById('calendarGrid');
+            const monthYearHead = document.getElementById('calendarMonthYear');
+            
+            const year = currentCalDate.getFullYear();
+            const month = currentCalDate.getMonth();
+
+            const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            monthYearHead.innerText = `${monthNames[month]} ${year}`;
+
+            cal.innerHTML = `
+                <div class="calendar-day-head">Min</div>
+                <div class="calendar-day-head">Sen</div>
+                <div class="calendar-day-head">Sel</div>
+                <div class="calendar-day-head">Rab</div>
+                <div class="calendar-day-head">Kam</div>
+                <div class="calendar-day-head">Jum</div>
+                <div class="calendar-day-head">Sab</div>
+            `;
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const totalDays = new Date(year, month + 1, 0).getDate();
+
+            for (let i = 0; i < firstDayIndex; i++) {
+                cal.innerHTML += `<div class="calendar-day empty"></div>`;
+            }
+
+            for (let day = 1; day <= totalDays; day++) {
+                const dayStr = day < 10 ? `0${day}` : `${day}`;
+                const monthStr = (month + 1) < 10 ? `0${month + 1}` : `${month + 1}`;
+                const fullDateStr = `${year}-${monthStr}-${dayStr}`;
+
+                const hasNotes = notes.some(n => !n.deleted && n.date === fullDateStr);
+                const markText = calendarMarks[fullDateStr];
+
+                cal.innerHTML += `
+                    <div class="calendar-day" onclick="openCalMarkModal('${fullDateStr}')">
+                        <span class="day-num">${day}</span>
+                        ${markText ? `<div class="calendar-mark-badge" title="${markText}">📌 ${markText}</div>` : ''}
+                        ${hasNotes ? '<div class="calendar-event-dot" title="Ada catatan"></div>' : ''}
+                    </div>
+                `;
+            }
+        }
+
+        /* --- EKSPOR & IMPOR DATA --- */
+        function exportData() {
+            const exportPayload = {
+                notes: notes,
+                calendarMarks: calendarMarks
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportPayload));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `NEXNOTE_BACKUP_${Date.now()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("📦 Data catatan berhasil diekspor!");
+        }
+
+        function triggerImport() {
+            document.getElementById('importFileInput').click();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if(Array.isArray(imported)) {
+                        notes = imported;
+                    } else if(imported.notes) {
+                        notes = imported.notes || [];
+                        calendarMarks = imported.calendarMarks || {};
+                    }
+                    saveToStorage();
+                    renderNotes();
+                    renderCalendar();
+                    updateStats();
+                    showToast("✅ Data berhasil dipulihkan!");
+                } catch(err) {
+                    alert("Gagal membaca file JSON!");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        /* --- TIMER & OTHER FUNCTIONS --- */
+        function checkReminders() {
+            const now = new Date().toISOString().slice(0, 16);
+            notes.forEach(note => {
+                if(!note.deleted && note.reminder === now) {
+                    alert(`🔔 PENGINGAT CATATAN:\n${note.title || 'Tanpa Judul'}`);
+                }
+            });
+        }
+
+        function startTimer() {
+            if(!timerInterval) {
+                timerInterval = setInterval(() => {
+                    timerSeconds++;
+                    const hrs = String(Math.floor(timerSeconds / 3600)).padStart(2, '0');
+                    const mins = String(Math.floor((timerSeconds % 3600) / 60)).padStart(2, '0');
+                    const secs = String(timerSeconds % 60).padStart(2, '0');
+                    document.getElementById('timerDisplay').innerText = `${hrs}:${mins}:${secs}`;
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            timerSeconds = 0;
+            document.getElementById('timerDisplay').innerText = "00:00:00";
+        }
+
+        function renderNotes() {
+            const activeNotes = notes.filter(n => !n.deleted);
+            activeNotes.sort((a, b) => b.pinned - a.pinned);
+
+            const buildHTML = (list) => {
+                if(list.length === 0) return `<p style="color: var(--text-muted);">Tidak ada catatan.</p>`;
+                return list.map(n => `
+                    <div class="note-card" onclick="openEditor(${n.id})">
+                        <div class="note-header">
+                            <h4 class="note-title">${n.pinLock ? '🔒 Catatan Terkunci' : (n.title || 'Tanpa Judul')}</h4>
+                            <i class="fa-solid fa-thumbtack note-pin ${n.pinned ? 'pinned' : ''}" 
+                               onclick="event.stopPropagation(); togglePin(${n.id})"></i>
+                        </div>
+                        <p class="note-body" style="font-family: ${n.fontFamily || 'inherit'};">${n.pinLock ? 'Masukkan PIN untuk melihat konten.' : (n.content.replace(/<[^>]*>?/gm, '') || 'Kosong...')}</p>
+                        ${n.images && n.images.length > 0 ? `<div style="margin-top:8px; font-size:0.75rem; color:var(--accent-primary);"><i class="fa-solid fa-paperclip"></i> ${n.images.length} Foto</div>` : ''}
+                        <div class="note-footer">
+                            <span class="note-tag">${n.folder} ${n.tag ? '| ' + n.tag : ''}</span>
+                            <span>${n.updatedAt}</span>
+                        </div>
+                    </div>
+                `).join('');
+            };
+
+            document.getElementById('dashboard-notes').innerHTML = buildHTML(activeNotes.slice(0, 6));
+            document.getElementById('all-notes-grid').innerHTML = buildHTML(activeNotes);
+            document.getElementById('favorites-grid').innerHTML = buildHTML(activeNotes.filter(n => n.favorite));
+            
+            updateAnalyticsChart(activeNotes);
+        }
+
+        function updateAnalyticsChart(activeNotes) {
+            const total = activeNotes.length || 1;
+            const sekolah = activeNotes.filter(n => n.folder === 'Sekolah').length;
+            const pribadi = activeNotes.filter(n => n.folder === 'Pribadi').length;
+            const ide = activeNotes.filter(n => n.folder === 'Ide').length;
+
+            document.getElementById('bar-sekolah').style.height = `${(sekolah / total) * 100}%`;
+            document.getElementById('bar-pribadi').style.height = `${(pribadi / total) * 100}%`;
+            document.getElementById('bar-ide').style.height = `${(ide / total) * 100}%`;
+        }
+
+        function renderGallery() {
+            const gallery = document.getElementById('gallery-grid');
+            let imagesHTML = '';
+            notes.forEach(note => {
+                if(!note.deleted && note.images) {
+                    note.images.forEach(imgSrc => {
+                        imagesHTML += `
+                            <div class="gallery-item" onclick="openLightbox('${imgSrc}')">
+                                <img src="${imgSrc}" alt="Gambar Catatan">
+                            </div>
+                        `;
+                    });
+                }
+            });
+            gallery.innerHTML = imagesHTML || `<p style="color: var(--text-muted);">Belum ada foto tersimpan.</p>`;
+        }
+
+        function renderTrash() {
+            const trashList = notes.filter(n => n.deleted);
+            const trashGrid = document.getElementById('trash-grid');
+            if(trashList.length === 0) {
+                trashGrid.innerHTML = `<p style="color: var(--text-muted);">Sampah kosong.</p>`;
+                return;
+            }
+            trashGrid.innerHTML = trashList.map(n => `
+                <div class="note-card">
+                    <div class="note-header">
+                        <h4 class="note-title">${n.title || 'Tanpa Judul'}</h4>
+                    </div>
+                    <p class="note-body">${n.content.replace(/<[^>]*>?/gm, '')}</p>
+                    <div class="note-footer" style="gap:8px;">
+                        <button class="btn-action" style="background:var(--success);" onclick="restoreNote(${n.id})">Pulihkan</button>
+                        <button class="btn-danger" onclick="permanentlyDeleteNote(${n.id})">Hapus Permanen</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function permanentlyDeleteNote(id) {
+            if(confirm("Apakah Anda yakin ingin menghapus catatan ini secara PERMANEN? Data tidak dapat dikembalikan!")) {
+                notes = notes.filter(n => n.id !== id);
+                saveToStorage();
+                renderTrash();
+                updateStats();
+            }
+        }
+
+        function emptyAllTrash() {
+            const trashCount = notes.filter(n => n.deleted).length;
+            if(trashCount === 0) {
+                alert("Sampah sudah kosong.");
+                return;
+            }
+            if(confirm(`Hapus permanen ${trashCount} catatan di dalam sampah? Tindakan ini tidak dapat dibatalkan!`)) {
+                notes = notes.filter(n => !n.deleted);
+                saveToStorage();
+                renderTrash();
+                updateStats();
+            }
+        }
+
+        function togglePin(id) {
+            const note = notes.find(n => n.id === id);
+            if(note) {
+                note.pinned = !note.pinned;
+                saveToStorage();
+                renderNotes();
+            }
+        }
+
+        function togglePinCurrentNote() {
+            if(!activeNoteId) return;
+            togglePin(activeNoteId);
+            const note = notes.find(n => n.id === activeNoteId);
+            updateEditorIcons(note);
+        }
+
+        function toggleFavCurrentNote() {
+            if(!activeNoteId) return;
+            const note = notes.find(n => n.id === activeNoteId);
+            if(note) {
+                note.favorite = !note.favorite;
+                saveToStorage();
+                updateEditorIcons(note);
+            }
+        }
+
+        function deleteCurrentNote() {
+            if(!activeNoteId) return;
+            const note = notes.find(n => n.id === activeNoteId);
+            if(note) {
+                note.deleted = true;
+                saveToStorage();
+                closeEditor();
+            }
+        }
+
+        function restoreNote(id) {
+            const note = notes.find(n => n.id === id);
+            if(note) {
+                note.deleted = false;
+                saveToStorage();
+                renderTrash();
+                renderNotes();
+            }
+        }
+
+        function updateEditorIcons(note) {
+            document.getElementById('pinIcon').style.color = note.pinned ? 'var(--warning)' : 'inherit';
+            document.getElementById('favIcon').style.color = note.favorite ? 'var(--warning)' : 'inherit';
+            document.getElementById('lockIcon').style.color = note.pinLock ? 'var(--success)' : 'inherit';
+        }
+
+        function filterFolder(folderName) {
+            switchView('all-notes');
+            const filtered = notes.filter(n => !n.deleted && n.folder === folderName);
+            document.getElementById('all-notes-grid').innerHTML = filtered.map(n => `
+                <div class="note-card" onclick="openEditor(${n.id})">
+                    <div class="note-header"><h4 class="note-title">${n.title || 'Tanpa Judul'}</h4></div>
+                    <p class="note-body" style="font-family: ${n.fontFamily || 'inherit'};">${n.content.replace(/<[^>]*>?/gm, '')}</p>
+                    <div class="note-footer"><span class="note-tag">${n.folder}</span></div>
+                </div>
+            `).join('');
+        }
+
+        function sortNotes(criteria) {
+            let activeNotes = notes.filter(n => !n.deleted);
+            if(criteria === 'newest') activeNotes.sort((a,b) => b.id - a.id);
+            if(criteria === 'oldest') activeNotes.sort((a,b) => a.id - b.id);
+            if(criteria === 'az') activeNotes.sort((a,b) => a.title.localeCompare(b.title));
+            if(criteria === 'za') activeNotes.sort((a,b) => b.title.localeCompare(a.title));
+
+            document.getElementById('all-notes-grid').innerHTML = activeNotes.map(n => `
+                <div class="note-card" onclick="openEditor(${n.id})">
+                    <div class="note-header"><h4 class="note-title">${n.title || 'Tanpa Judul'}</h4></div>
+                    <p class="note-body" style="font-family: ${n.fontFamily || 'inherit'};">${n.content.replace(/<[^>]*>?/gm, '')}</p>
+                    <div class="note-footer"><span class="note-tag">${n.folder}</span></div>
+                </div>
+            `).join('');
+        }
+
+        function searchNotes() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = notes.filter(n => !n.deleted && (
+                n.title.toLowerCase().includes(query) || 
+                n.content.toLowerCase().includes(query) ||
+                (n.tag && n.tag.toLowerCase().includes(query))
+            ));
+            
+            switchView('all-notes');
+            document.getElementById('all-notes-grid').innerHTML = filtered.map(n => `
+                <div class="note-card" onclick="openEditor(${n.id})">
+                    <div class="note-header"><h4 class="note-title">${n.title || 'Tanpa Judul'}</h4></div>
+                    <p class="note-body" style="font-family: ${n.fontFamily || 'inherit'};">${n.content.replace(/<[^>]*>?/gm, '')}</p>
+                    <div class="note-footer"><span class="note-tag">${n.folder}</span></div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            const activeNotes = notes.filter(n => !n.deleted);
+            let totalImgs = 0;
+            let totalLocked = 0;
+            activeNotes.forEach(n => { 
+                if(n.images) totalImgs += n.images.length; 
+                if(n.pinLock) totalLocked++;
+            });
+
+            document.getElementById('stat-total').innerText = activeNotes.length;
+            document.getElementById('stat-favs').innerText = activeNotes.filter(n => n.favorite).length;
+            document.getElementById('stat-imgs').innerText = totalImgs;
+            document.getElementById('stat-locked').innerText = totalLocked;
+        }
+    </script>
+</body>
+</html>
